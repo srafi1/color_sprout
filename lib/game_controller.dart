@@ -1,5 +1,6 @@
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class GameController extends Game {
@@ -24,6 +25,10 @@ class GameController extends Game {
 
   void resize(Size size) {
     screenSize = size;
+  }
+
+  void onTapDown(TapDownDetails tap) {
+    print("Tapped at: ${tap.globalPosition}");
   }
 
 }
