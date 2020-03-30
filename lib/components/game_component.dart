@@ -100,8 +100,6 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
     }
     if (complete) {
       print("Level complete");
-    } else {
-      print("Level incomplete");
     }
   }
 }
