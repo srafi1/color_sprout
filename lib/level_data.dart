@@ -62,4 +62,8 @@ class Levels {
   static LevelData loadLevel(int level) {
     return levels[level];
   }
+
+  static int maxLevel() {
+    return levels.length - 1;
+  }
 }

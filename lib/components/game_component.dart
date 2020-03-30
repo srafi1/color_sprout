@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:color_sprout/components/grid_background.dart';
 import 'package:color_sprout/components/tile.dart';
+import 'package:color_sprout/game_controller.dart';
 import 'package:color_sprout/level_data.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/composed_component.dart';
@@ -13,22 +14,22 @@ import 'package:flutter/cupertino.dart';
 class GameComponent extends PositionComponent with HasGameRef, Tapable, ComposedComponent {
   @override
   Game gameRef;
+  GameController game;
   Size screenSize;
 
   bool allowInput;
   GridBackground gridBackground;
   List<List<Tile>> grid;
 
-  GameComponent(this.gameRef, Size initialSize) {
+  GameComponent(this.game, this.screenSize) {
     allowInput = true;
 
     gridBackground = GridBackground();
-    gridBackground.resize(initialSize);
-
-    screenSize = initialSize;
+    gridBackground.resize(screenSize);
   }
 
-  void intializeLevel(LevelData levelData) {
+  void initializeLevel(LevelData levelData) {
+    allowInput = true;
     components.clear();
     components..add(gridBackground);
 
@@ -99,7 +100,8 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
       }
     }
     if (complete) {
-      print("Level complete");
+      allowInput = false;
+      game.completeLevel();
     }
   }
 }

@@ -12,7 +12,8 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   SharedPreferences storage;
   int level;
   TextComponent levelText;
-  TextStyle textStyle;
+  TextStyle largeText;
+  TextStyle normalText;
   GameComponent game;
 
   GameController(Size initialSize, this.storage) {
@@ -22,17 +23,22 @@ class GameController extends BaseGame with HasWidgetsOverlay {
         ..x = 10
         ..y = initialSize.height/2 - initialSize.width/2 - 10;
 
-    textStyle = TextStyle(
+    largeText = TextStyle(
       color: Colors.black,
       fontSize: 40,
     );
-    
+
+    normalText = TextStyle(
+      color: Colors.black,
+      fontSize: 32,
+    );
+
     game = GameComponent(this, initialSize)
         ..x = 0
         ..y = initialSize.height/2 - initialSize.width/2
         ..width = initialSize.width
         ..height = initialSize.width;
-    
+
     add(BackgroundComponent());
     add(game);
     add(levelText);
@@ -43,8 +49,30 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     );
   }
 
+  void loadLevel() {
+    levelText.text = "Level ${level+1}";
+    game.initializeLevel(Levels.loadLevel(level));
+  }
+
+  void completeLevel() {
+    level++;
+    int highestLevel = storage.getInt("level") ?? 0;
+    if (level > highestLevel && level <= Levels.maxLevel()) {
+      highestLevel = level;
+    }
+    storage.setInt("level", highestLevel);
+    addWidgetOverlay(
+        "levelCompleteMenu",
+        buildLevelCompleteMenu()
+    );
+    if (level > Levels.maxLevel()) {
+      level--;
+    }
+  }
+  
+
   Widget buildIconButton({Color color, Icon icon, Function callback, double size: 50}) {
-    return 
+    return
       Padding(
         padding: EdgeInsets.all(10),
         child: ClipOval(
@@ -64,7 +92,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   }
 
   Widget buildMainMenu() {
-    return 
+    return
       Card(
         margin: EdgeInsets.only(),
         color: GameColors.background,
@@ -72,14 +100,13 @@ class GameController extends BaseGame with HasWidgetsOverlay {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("Color Sprout", style: textStyle),
+              Text("Color Sprout", style: largeText),
               buildIconButton(
                 icon: Icon(Icons.play_arrow),
-                color: Colors.blue,
+                color: Colors.green,
                 callback: () {
-                  print("Clicked play");
+                  loadLevel();
                   removeWidgetOverlay('mainMenu');
-                  game.intializeLevel(Levels.loadLevel(level));
                 },
                 size: 100,
               ),
@@ -93,7 +120,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   ),
                   buildIconButton(
                     icon: Icon(Icons.list),
-                    color: Colors.green,
+                    color: Colors.blue,
                     callback: () { print("Clicked list"); },
                   ),
                   buildIconButton(
@@ -108,7 +135,67 @@ class GameController extends BaseGame with HasWidgetsOverlay {
         )
       );
   }
-}
-class GridBackgroundComponent {
-}
 
+  Widget buildLevelCompleteMenu() {
+    String text = "Level complete!";
+    List<Widget> buttons = [
+      buildIconButton(
+        color: Colors.red,
+        icon: Icon(Icons.home),
+        callback: () {
+        removeWidgetOverlay("levelCompleteMenu");
+        addWidgetOverlay(
+          "mainMenu",
+          buildMainMenu()
+        );
+        }
+      ),
+      buildIconButton(
+        color: Colors.blue,
+        icon: Icon(Icons.list),
+        callback: () {
+        print("levels");
+        }
+      ),
+    ];
+
+    if (level > Levels.maxLevel()) {
+      text = "All levels completed!";
+    } else {
+      buttons.add(
+        buildIconButton(
+          color: Colors.green,
+          icon: Icon(Icons.play_arrow),
+          callback: () {
+            loadLevel();
+            removeWidgetOverlay("levelCompleteMenu");
+          },
+        )
+      );
+    }
+
+    return
+      Center(
+        child: Card(
+          color: GameColors.background,
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(width: 5),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(text, style: normalText),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: buttons,
+                )
+              ],
+            )
+          ),
+        )
+      );
+  }
+}
