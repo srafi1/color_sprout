@@ -27,17 +27,11 @@ class GameController extends BaseGame with HasWidgetsOverlay {
       fontSize: 40,
     );
     
-    LevelData dummyLevel = LevelData()
-        ..gridSize = 3
-        ..start = [[-1, -1, -1], [-1, 0, -1], [-1, -1, -1]]
-        ..target = [[-1, 0, -1], [0, -1, 0], [-1, 0, -1]];
-
     game = GameComponent(this, initialSize)
         ..x = 0
         ..y = initialSize.height/2 - initialSize.width/2
         ..width = initialSize.width
         ..height = initialSize.width;
-    game.intializeLevel(dummyLevel);
     
     add(BackgroundComponent());
     add(game);
@@ -85,6 +79,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 callback: () {
                   print("Clicked play");
                   removeWidgetOverlay('mainMenu');
+                  game.intializeLevel(Levels.loadLevel(level));
                 },
                 size: 100,
               ),
