@@ -60,7 +60,7 @@ class Tile extends PositionComponent with Tapable {
 
   void setTarget(int colorID) {
     targetColorID = colorID;
-    targetPaint.color = GameColors.tileColors[colorID];
+    targetPaint.color = GameColors.targetColors[colorID];
   }
 
   @override
