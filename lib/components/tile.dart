@@ -18,6 +18,9 @@ class Tile extends PositionComponent {
   Rect nextRect;
   Paint nextPaint;
 
+  bool growing;
+  bool shrinking;
+
   List<Tile> neighbors;
 
   Tile() {
@@ -34,30 +37,44 @@ class Tile extends PositionComponent {
     nextColorID = -1;
     nextRect = Rect.fromCenter(center: center, width: 0, height: 0);
     nextPaint = Paint()..color = GameColors.background;
+
+    growing = false;
+    shrinking = false;
   }
 
   void setNextColor(int colorID) {
     nextColorID = colorID;
     nextPaint.color = GameColors.tileColors[colorID];
+    shrinking = true;
   }
 
   @override
   void render(Canvas c) {
     c.drawRect(targetRect, targetPaint);
     c.drawRect(mainRect, mainPaint);
-    if (nextColorID != -1) {
+    if (growing) {
       c.drawRect(nextRect, nextPaint);
     }
   }
 
   @override
   void update(double t) {
-    if (nextColorID != -1) {
+    if (growing) {
       nextRect = nextRect.inflate(width*t);
       if (nextRect.width >= mainRect.width) {
+        growing = false;
+        colorID = nextColorID;
+        mainRect = Rect.fromCenter(center: center, width: 0.8*width, height: 0.8*height);
         mainPaint.color = GameColors.tileColors[nextColorID];
         nextColorID = -1;
-        nextRect.deflate(nextRect.width);
+        nextRect = nextRect.deflate(nextRect.width);
+      }
+    } else if (shrinking) {
+      mainRect = mainRect.deflate(width*t);
+      if (mainRect.width <= 0) {
+        shrinking = false;
+        mainRect = Rect.fromCenter(center: center, width: 0.8*width, height: 0.8*height);
+        mainPaint.color = GameColors.background;
       }
     }
   }
