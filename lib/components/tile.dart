@@ -1,11 +1,13 @@
 import 'dart:ui';
 
 import 'package:color_sprout/game_colors.dart';
+import 'package:color_sprout/components/game_component.dart';
 import 'package:flame/components/component.dart';
 import 'package:flame/components/mixins/tapable.dart';
 import 'package:flutter/cupertino.dart';
 
 class Tile extends PositionComponent with Tapable {
+  GameComponent game;
   Offset center;
 
   int colorID;
@@ -25,7 +27,7 @@ class Tile extends PositionComponent with Tapable {
 
   List<Tile> neighbors;
 
-  Tile() {
+  Tile(this.game) {
     colorID = -1;
     mainPaint = Paint()..color = GameColors.background;
 
@@ -76,7 +78,7 @@ class Tile extends PositionComponent with Tapable {
   @override
   void update(double t) {
     if (growing) {
-      nextRect = nextRect.inflate(width*t);
+      nextRect = nextRect.inflate(2*width*t);
       if (nextRect.width >= mainRect.width) {
         growing = false;
         colorID = nextColorID;
@@ -85,8 +87,9 @@ class Tile extends PositionComponent with Tapable {
         nextRect = Rect.fromCenter(center: center, width: 0, height: 0);
       }
     } else if (shrinking) {
-      mainRect = mainRect.deflate(width*t);
+      mainRect = mainRect.deflate(2*width*t);
       if (mainRect.width <= 0) {
+        game.allowInput = true;
         shrinking = false;
         mainRect = Rect.fromCenter(center: center, width: 0.8*width, height: 0.8*height);
         mainPaint.color = GameColors.background;
@@ -96,8 +99,8 @@ class Tile extends PositionComponent with Tapable {
 
   @override
   void onTapUp(TapUpDetails tap) {
-    print("Tapped tile");
-    if (colorID != -1) {
+    if (colorID != -1 && game.allowInput) {
+      game.allowInput = false;
       neighbors.forEach((Tile neighbor) {
         neighbor.setNextColor(colorID);
       });
