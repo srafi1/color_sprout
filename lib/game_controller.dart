@@ -1,17 +1,17 @@
 import 'package:color_sprout/components/background.dart';
+import 'game_colors.dart';
 import 'package:flame/game.dart';
-import 'package:flame/text_config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GameController extends BaseGame with HasWidgetsOverlay {
   SharedPreferences storage;
-
-  TextConfig regularText;
   TextStyle textStyle;
+  int level;
 
-  GameController() {
-    regularText = TextConfig(color: Colors.black);
+  GameController(this.storage) {
+    level = storage.getInt("level") ?? 0;
+
     textStyle = TextStyle(
       color: Colors.black,
       fontSize: 40,
@@ -49,7 +49,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     return 
       Card(
         margin: EdgeInsets.only(),
-        color: Color(0xFFF3F3F3),
+        color: GameColors.background,
         child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

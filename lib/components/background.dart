@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:color_sprout/game_colors.dart';
 import 'package:flame/components/component.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -7,7 +8,7 @@ class BackgroundComponent extends Component {
   Rect bgRect;
   Paint bgColor;
 
-  BackgroundComponent() : bgColor = Paint()..color = Color(0xFFF8F8FF);
+  BackgroundComponent() : bgColor = Paint()..color = GameColors.background;
 
   @override
   void resize(Size newSize) {

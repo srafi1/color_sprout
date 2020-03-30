@@ -5,13 +5,13 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  GameController gc = GameController();
-  runApp(gc.widget);
-
-  SharedPreferences storage = await SharedPreferences.getInstance();
-  gc.storage = storage;
+  WidgetsFlutterBinding.ensureInitialized();
 
   Util flameUtil = Util();
   await flameUtil.fullScreen();
   await flameUtil.setOrientation(DeviceOrientation.portraitUp);
+
+  SharedPreferences storage = await SharedPreferences.getInstance();
+  GameController gameController = GameController(storage);
+  runApp(gameController.widget);
 }
