@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:color_sprout/game_colors.dart';
 import 'package:flame/components/component.dart';
+import 'package:flame/components/mixins/tapable.dart';
+import 'package:flutter/cupertino.dart';
 
-class Tile extends PositionComponent {
+class Tile extends PositionComponent with Tapable {
   Offset center;
 
   int colorID;
@@ -77,5 +79,13 @@ class Tile extends PositionComponent {
         mainPaint.color = GameColors.background;
       }
     }
+  }
+
+  @override
+  void onTapUp(TapUpDetails tap) {
+    neighbors.forEach((Tile neighbor) {
+      setNextColor(colorID);
+    });
+    shrinking = true;
   }
 }
