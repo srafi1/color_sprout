@@ -12,6 +12,7 @@ void main() async {
   await flameUtil.setOrientation(DeviceOrientation.portraitUp);
 
   SharedPreferences storage = await SharedPreferences.getInstance();
-  GameController gameController = GameController(storage);
+  Size initialSize = await flameUtil.initialDimensions();
+  GameController gameController = GameController(initialSize, storage);
   runApp(gameController.widget);
 }

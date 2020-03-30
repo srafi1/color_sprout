@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class GameColors {
   static Color background = Color(0xFFC8FBC8);
+  static Color outline = Colors.black;
   static List<Color> tileColors = [
     Colors.blue,
     Colors.red,
