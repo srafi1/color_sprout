@@ -28,9 +28,9 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     );
     
     LevelData dummyLevel = LevelData()
-        ..gridSize = 4
-        ..start = [[-1, 0, -1, -1], [1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]
-        ..target = [[-1, 0, -1, -1], [1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]];
+        ..gridSize = 3
+        ..start = [[-1, -1, -1], [-1, 0, -1], [-1, -1, -1]]
+        ..target = [[-1, 0, -1], [0, -1, 0], [-1, 0, -1]];
 
     game = GameComponent(this, initialSize)
         ..x = 0

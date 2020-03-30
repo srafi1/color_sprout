@@ -85,14 +85,17 @@ class Tile extends PositionComponent with Tapable {
         mainPaint.color = GameColors.tileColors[nextColorID];
         nextColorID = -1;
         nextRect = Rect.fromCenter(center: center, width: 0, height: 0);
+        game.checkCompletion();
       }
     } else if (shrinking) {
       mainRect = mainRect.deflate(2*width*t);
       if (mainRect.width <= 0) {
         game.allowInput = true;
         shrinking = false;
+        colorID = -1;
         mainRect = Rect.fromCenter(center: center, width: 0.8*width, height: 0.8*height);
         mainPaint.color = GameColors.background;
+        game.checkCompletion();
       }
     }
   }

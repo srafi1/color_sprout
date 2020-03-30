@@ -88,4 +88,20 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
   Rect toRect() {
     return gridBackground.bgRect;
   }
+
+  void checkCompletion() {
+    bool complete = true;
+    for (int i = 1; i < grid.length-1; i++) {
+      for (int j = 1; j < grid.length-1; j++) {
+        if (grid[i][j].colorID != grid[i][j].targetColorID) {
+          complete = false;
+        }
+      }
+    }
+    if (complete) {
+      print("Level complete");
+    } else {
+      print("Level incomplete");
+    }
+  }
 }
