@@ -1,5 +1,8 @@
 import 'package:color_sprout/components/background.dart';
 import 'package:color_sprout/components/game_component.dart';
+import 'package:color_sprout/level_data.dart';
+import 'package:flame/anchor.dart';
+import 'package:flame/components/text_component.dart';
 import 'game_colors.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +10,38 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class GameController extends BaseGame with HasWidgetsOverlay {
   SharedPreferences storage;
-  TextStyle textStyle;
   int level;
+  TextComponent levelText;
+  TextStyle textStyle;
+  GameComponent game;
 
   GameController(Size initialSize, this.storage) {
     level = storage.getInt("level") ?? 0;
+    levelText = TextComponent("Level ${level+1}")
+        ..anchor = Anchor.bottomLeft
+        ..x = 10
+        ..y = initialSize.height/2 - initialSize.width/2 - 10;
 
     textStyle = TextStyle(
       color: Colors.black,
       fontSize: 40,
     );
     
+    LevelData dummyLevel = LevelData()
+        ..gridSize = 4
+        ..start = [[-1, 0, -1, -1], [1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]
+        ..target = [[-1, 0, -1, -1], [1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]];
+
+    game = GameComponent(this, initialSize)
+        ..x = 0
+        ..y = initialSize.height/2 - initialSize.width/2
+        ..width = initialSize.width
+        ..height = initialSize.width;
+    game.intializeLevel(dummyLevel);
+    
     add(BackgroundComponent());
-    add(GameComponent(this, initialSize));
+    add(game);
+    add(levelText);
 
     addWidgetOverlay(
       "mainMenu",
