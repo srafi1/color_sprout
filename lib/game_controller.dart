@@ -44,13 +44,13 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     add(levelText);
 
     addWidgetOverlay(
-      "gameBottomUI",
-      buildGameBottom()
+      "mainMenu",
+      buildMainMenu()
     );
 
     addWidgetOverlay(
-      "mainMenu",
-      buildMainMenu()
+      "gameBottomUI",
+      buildGameBottom()
     );
   }
 
@@ -256,6 +256,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     return
       Center(
         child: Card(
+          elevation: 0,
           color: GameColors.background,
           child: Container(
             height: 200,
@@ -279,6 +280,36 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   }
 
   Widget buildGameBottom() {
-    return Text("bottom");
+    return
+      Container(
+        width:double.infinity,
+        height:double.infinity,
+        padding: EdgeInsets.all(50),
+        child: Flex(
+          direction: Axis.horizontal,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Card(
+              elevation: 0,
+              color: GameColors.background,
+              child: buildIconButton(
+                icon: Icon(Icons.home),
+                color: Colors.red,
+                callback: () {},
+              )
+            ),
+            Card(
+              elevation: 0,
+              color: GameColors.background,
+              child: buildIconButton(
+                icon: Icon(Icons.undo),
+                color: Colors.blue,
+                callback: () {},
+              )
+            ),
+          ]
+        )
+      );
   }
 }
