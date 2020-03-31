@@ -7,6 +7,7 @@ import 'game_colors.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GameController extends BaseGame with HasWidgetsOverlay {
   SharedPreferences storage;
@@ -44,13 +45,13 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     add(levelText);
 
     addWidgetOverlay(
-      "mainMenu",
-      buildMainMenu()
+      "gameBottomUI",
+      buildGameBottom()
     );
 
     addWidgetOverlay(
-      "gameBottomUI",
-      buildGameBottom()
+      "mainMenu",
+      buildMainMenu()
     );
   }
 
@@ -119,11 +120,6 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   buildIconButton(
-                    icon: Icon(Icons.settings),
-                    color: Colors.orange,
-                    callback: () { print("Clicked settings"); },
-                  ),
-                  buildIconButton(
                     icon: Icon(Icons.list),
                     color: Colors.blue,
                     callback: () {
@@ -137,7 +133,17 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   buildIconButton(
                     icon: Icon(Icons.favorite),
                     color: Colors.red,
-                    callback: () { print("Clicked favorite"); },
+                    callback: () {
+                      String url = "https://play.google.com/store/apps/details?id=com.shakilrafi.color_sprout";
+                      canLaunch(url)
+                          .then((bool able) {
+                            if (able) {
+                              launch(url);
+                            } else {
+                              print("cant rate");
+                            }
+                          });
+                    },
                   ),
                 ],
               )
