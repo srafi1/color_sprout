@@ -150,18 +150,14 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   Widget buildLevelsMenu() {
     int highestLevel = storage.getInt("level");
     List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
-      return SizedBox(
-        width: 50,
-        height: 50,
-        child: RaisedButton(
+      return RaisedButton(
           color: Colors.blue,
           child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
-          level = i;
-          loadLevel();
-          removeWidgetOverlay("levelsMenu");
+            level = i;
+            loadLevel();
+            removeWidgetOverlay("levelsMenu");
           },
-        )
       );
     });
     List<Widget> lockedLevels = List.generate(Levels.maxLevel()-highestLevel, (i) {
@@ -189,6 +185,8 @@ class GameController extends BaseGame with HasWidgetsOverlay {
               SizedBox(height: 20),
               Expanded(
                 child: GridView.count(
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
                   crossAxisCount: 5,
                   children: unlockedLevels + lockedLevels,
                 )
