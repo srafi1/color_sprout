@@ -296,7 +296,12 @@ class GameController extends BaseGame with HasWidgetsOverlay {
               child: buildIconButton(
                 icon: Icon(Icons.home),
                 color: Colors.red,
-                callback: () {},
+                callback: () {
+                  addWidgetOverlay(
+                    "goHomePrompt",
+                    buildGoHomePrompt()
+                  );
+                },
               )
             ),
             Card(
@@ -305,10 +310,104 @@ class GameController extends BaseGame with HasWidgetsOverlay {
               child: buildIconButton(
                 icon: Icon(Icons.undo),
                 color: Colors.blue,
-                callback: () {},
-              )
+                callback: () {
+                  addWidgetOverlay(
+                    "resetPrompt",
+                    buildResetPrompt()
+                  );
+                },
+              ),
             ),
-          ]
+          ],
+        ),
+      );
+  }
+
+  Widget buildGoHomePrompt() {
+    return 
+      Center(
+        child: Card(
+          elevation: 0,
+          color: GameColors.background,
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(width: 5),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Go to main menu?", style: normalText),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    buildIconButton(
+                      icon: Icon(Icons.close),
+                      color: Colors.red,
+                      callback: () {
+                        removeWidgetOverlay("goHomePrompt");
+                      }
+                    ),
+                    buildIconButton(
+                      icon: Icon(Icons.check),
+                      color: Colors.green,
+                      callback: () {
+                        removeWidgetOverlay("goHomePrompt");
+                        addWidgetOverlay(
+                          "mainMenu",
+                          buildMainMenu()
+                        );
+                      }
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+  }
+
+  Widget buildResetPrompt() {
+    return 
+      Center(
+        child: Card(
+          elevation: 0,
+          color: GameColors.background,
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(width: 5),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Reset level?", style: normalText),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    buildIconButton(
+                      icon: Icon(Icons.close),
+                      color: Colors.red,
+                      callback: () {
+                        removeWidgetOverlay("resetPrompt");
+                      }
+                    ),
+                    buildIconButton(
+                      icon: Icon(Icons.check),
+                      color: Colors.green,
+                      callback: () {
+                        removeWidgetOverlay("resetPrompt");
+                        loadLevel();
+                      }
+                    ),
+                  ],
+                )
+              ],
+            )
+          ),
         )
       );
   }
