@@ -44,6 +44,11 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     add(levelText);
 
     addWidgetOverlay(
+      "gameBottomUI",
+      buildGameBottom()
+    );
+
+    addWidgetOverlay(
       "mainMenu",
       buildMainMenu()
     );
@@ -121,7 +126,13 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   buildIconButton(
                     icon: Icon(Icons.list),
                     color: Colors.blue,
-                    callback: () { print("Clicked list"); },
+                    callback: () {
+                      removeWidgetOverlay("mainMenu");
+                      addWidgetOverlay(
+                        "levelsMenu",
+                        buildLevelsMenu()
+                      );
+                    },
                   ),
                   buildIconButton(
                     icon: Icon(Icons.favorite),
@@ -130,6 +141,70 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   ),
                 ],
               )
+            ]
+          )
+        )
+      );
+  }
+
+  Widget buildLevelsMenu() {
+    int highestLevel = storage.getInt("level");
+    List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
+      return SizedBox(
+        width: 50,
+        height: 50,
+        child: RaisedButton(
+          color: Colors.blue,
+          child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
+          onPressed: () {
+          level = i;
+          loadLevel();
+          removeWidgetOverlay("levelsMenu");
+          },
+        )
+      );
+    });
+    List<Widget> lockedLevels = List.generate(Levels.maxLevel()-highestLevel, (i) {
+      return RaisedButton(
+        color: Colors.grey,
+        child: Text(
+          "${highestLevel+i+2}",
+          style: normalText.copyWith(color: Colors.white)
+        ),
+        onPressed: null,
+      );
+    });
+
+    return
+      Card(
+        margin: EdgeInsets.only(),
+        color: GameColors.background,
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              SizedBox(height: 100),
+              Text("Levels", style: largeText),
+              SizedBox(height: 20),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 5,
+                  children: unlockedLevels + lockedLevels,
+                )
+              ),
+              buildIconButton(
+                icon: Icon(Icons.home),
+                color: Colors.red,
+                size: 70,
+                callback: () {
+                  removeWidgetOverlay("levelsMenu");
+                  addWidgetOverlay(
+                    "mainMenu",
+                    buildMainMenu()
+                  );
+                }
+              ),
             ]
           )
         )
@@ -154,7 +229,11 @@ class GameController extends BaseGame with HasWidgetsOverlay {
         color: Colors.blue,
         icon: Icon(Icons.list),
         callback: () {
-        print("levels");
+          removeWidgetOverlay("levelCompleteMenu");
+          addWidgetOverlay(
+            "levelsMenu",
+            buildLevelsMenu()
+          );
         }
       ),
     ];
@@ -197,5 +276,9 @@ class GameController extends BaseGame with HasWidgetsOverlay {
           ),
         )
       );
+  }
+
+  Widget buildGameBottom() {
+    return Text("bottom");
   }
 }
