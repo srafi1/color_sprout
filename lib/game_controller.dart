@@ -312,7 +312,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
               elevation: 0,
               color: GameColors.background,
               child: buildIconButton(
-                icon: Icon(Icons.undo),
+                icon: Icon(Icons.restore),
                 color: Colors.blue,
                 callback: () {
                   addWidgetOverlay(
