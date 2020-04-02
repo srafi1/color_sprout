@@ -47,7 +47,7 @@ class Tile extends PositionComponent with Tapable {
     super.resize(size);
     center = Offset(x + width/2, y + height/2);
     mainRect = Rect.fromCenter(center: center, width: 0.8*width, height: 0.8*height);
-    targetRect = Rect.fromCenter(center: center, width: width, height: height);
+    targetRect = Rect.fromCenter(center: center, width: 0.95*width, height: 0.95*height);
     nextRect = Rect.fromCenter(center: center, width: 0, height: 0);
   }
 
