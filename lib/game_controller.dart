@@ -322,6 +322,17 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 },
               ),
             ),
+            Card(
+              elevation: 0,
+              color: GameColors.background,
+              child: buildIconButton(
+                icon: Icon(Icons.code),
+                color: Colors.blue,
+                callback: () {
+                  game.printState();
+                },
+              ),
+            ),
           ],
         ),
       );

@@ -108,4 +108,12 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
       game.completeLevel();
     }
   }
+
+  void printState() {
+    print("level:");
+    grid.sublist(1, grid.length-1).forEach((row) {
+      List<int> pr = row.sublist(1, row.length-1).map( (tile) {return tile.colorID;} ).toList();
+      print("$pr,");
+    });
+  }
 }
