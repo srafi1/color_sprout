@@ -154,7 +154,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   }
 
   Widget buildLevelsMenu() {
-    int highestLevel = storage.getInt("level");
+    int highestLevel = storage.getInt("level") ?? 0;
     List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
       return RaisedButton(
           color: Colors.blue,
