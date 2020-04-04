@@ -154,6 +154,31 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   }
 
   Widget buildLevelsMenu() {
+    List<Widget> templateLevels = List.generate(Levels.maxTemplate()+1, (i) {
+      return RaisedButton(
+          color: Colors.green,
+          child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
+          onPressed: () {
+            level = i;
+            levelText.text = "Template ${level+1}";
+            game.initializeLevel(Levels.loadTemplate(level));
+            removeWidgetOverlay("levelsMenu");
+          },
+      );
+    });
+    List<Widget> randomTemplateLevels = List.generate(3, (i) {
+      i = i + 5;
+      return RaisedButton(
+          color: Colors.green,
+          child: Text("R$i", style: normalText.copyWith(color: Colors.white)),
+          onPressed: () {
+            levelText.text = "Random Template: $i";
+            game.initializeLevel(Levels.loadTemplate(-1*i));
+            removeWidgetOverlay("levelsMenu");
+          },
+      );
+    });
+
     int highestLevel = storage.getInt("level") ?? 0;
     List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
       return RaisedButton(
@@ -194,7 +219,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   crossAxisCount: 5,
-                  children: unlockedLevels + lockedLevels,
+                  children: templateLevels + randomTemplateLevels + unlockedLevels + lockedLevels,
                 )
               ),
               buildIconButton(
@@ -322,17 +347,17 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 },
               ),
             ),
-            //Card(
-              //elevation: 0,
-              //color: GameColors.background,
-              //child: buildIconButton(
-                //icon: Icon(Icons.code),
-                //color: Colors.blue,
-                //callback: () {
-                  //game.printState();
-                //},
-              //),
-            //),
+            Card(
+              elevation: 0,
+              color: GameColors.background,
+              child: buildIconButton(
+                icon: Icon(Icons.code),
+                color: Colors.blue,
+                callback: () {
+                  game.printState();
+                },
+              ),
+            ),
           ],
         ),
       );

@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:color_sprout/game_colors.dart';
+
 class LevelData {
   int gridSize;
   List<List<int>> start;
@@ -333,11 +337,114 @@ class Levels {
     ),
   ];
 
+  static List<LevelData> templates = [
+    LevelData(
+        gridSize: 5,
+        start: [
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, 0, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+        ], 
+        target: [
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+        ], 
+    ),
+    LevelData(
+        gridSize: 5,
+        start: [
+          [-1, -1, -1, -1, -1],
+          [-1, -1, 0, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, 1, -1, -1],
+          [-1, -1, -1, -1, -1],
+        ], 
+        target: [
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+        ], 
+    ),
+    LevelData(
+        gridSize: 5,
+        start: [
+          [-1, -1, -1, -1, -1],
+          [-1, -1, 0, -1, -1],
+          [-1, 2, -1, -1, -1],
+          [-1, -1, 1, -1, -1],
+          [-1, -1, -1, -1, -1],
+        ], 
+        target: [
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+          [-1, -1, -1, -1, -1],
+        ], 
+    ),
+  ];
+
   static LevelData loadLevel(int level) {
     return levels[level];
   }
 
+  static LevelData randomLevel(int gridSize) {
+    print("size: $gridSize");
+    LevelData level = LevelData(
+        gridSize: gridSize,
+        start: List.generate(gridSize, (i) {
+          return List.generate(gridSize, (i) {
+            return -1;
+          });
+        }),
+        target: List.generate(gridSize, (i) {
+          return List.generate(gridSize, (i) {
+            return -1;
+          });
+        })
+    );
+
+    Random rand = Random();
+    int numStarting = rand.nextInt(GameColors.tileColors.length)+1;
+    for (int i = 0; i < numStarting; i++) {
+      int x = rand.nextInt(gridSize);
+      int y = rand.nextInt(gridSize);
+      while (level.start[y][x] != -1) {
+        x = rand.nextInt(gridSize);
+        y = rand.nextInt(gridSize);
+      }
+      level.start[y][x] = i;
+    }
+
+    print("random level start: $gridSize");
+    level.start.sublist(0, level.start.length).forEach((row) {
+      List<int> pr = row.sublist(0, row.length).map( (tile) {return tile;} ).toList();
+      print("$pr,");
+    });
+
+    return level;
+  }
+
+  static LevelData loadTemplate(int template) {
+    if (template < 0) {
+      return randomLevel(-1*template);
+    } else {
+      return templates[template];
+    }
+  }
+
   static int maxLevel() {
     return levels.length - 1;
+  }
+
+  static int maxTemplate() {
+    return templates.length - 1;
   }
 }
