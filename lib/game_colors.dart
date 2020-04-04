@@ -9,10 +9,12 @@ class GameColors {
     Colors.blue,
     Colors.red,
     Colors.green,
+    Colors.purple,
   ];
   static List<Color> targetColors = [
     Colors.blue.withOpacity(.8),
     Colors.red.withOpacity(.8),
     Colors.green.withOpacity(.8),
+    Colors.purple.withOpacity(.8),
   ];
 }
