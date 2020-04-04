@@ -7,6 +7,7 @@ class LevelData {
 
 class Levels {
   static List<LevelData> levels = [
+    // 1
     LevelData(
         gridSize: 5,
         start: [
@@ -24,6 +25,7 @@ class Levels {
           [-1, -1, -1, -1, -1],
         ], 
     ),
+    // 2
     LevelData(
         gridSize: 5,
         start: [
@@ -41,6 +43,7 @@ class Levels {
           [-1, -1, 0, -1, -1],
         ], 
     ),
+    // 3
     LevelData(
         gridSize: 5,
         start: [
@@ -58,6 +61,7 @@ class Levels {
           [-1, -1, -1, -1, -1],
         ], 
     ),
+    // 4
     LevelData(
         gridSize: 5,
         start: [
@@ -75,6 +79,7 @@ class Levels {
           [-1, -1, 0, -1, -1],
         ], 
     ),
+    // 5
     LevelData(
         gridSize: 5,
         start: [
@@ -92,6 +97,7 @@ class Levels {
           [-1, -1, 0, -1, -1],
         ], 
     ),
+    // 6
     LevelData(
         gridSize: 5,
         start: [
@@ -109,6 +115,7 @@ class Levels {
           [-1, -1, 1, -1, -1],
         ], 
     ),
+    // 7
     LevelData(
         gridSize: 5,
         start: [
@@ -126,6 +133,7 @@ class Levels {
           [-1, 1, 1, -1, -1],
         ], 
     ),
+    // 8
     LevelData(
         gridSize: 5,
         start: [
@@ -143,6 +151,7 @@ class Levels {
           [-1, -1, 1, -1, -1],
         ], 
     ),
+    // 9
     LevelData(
         gridSize: 5,
         start: [
@@ -160,6 +169,7 @@ class Levels {
           [-1, 1, 1, 1, -1],
         ], 
     ),
+    // 10
     LevelData(
         gridSize: 5,
         start: [
@@ -177,6 +187,7 @@ class Levels {
           [-1, -1, -1, -1, -1],
         ], 
     ),
+    // 11
     LevelData(
         gridSize: 5,
         start: [
@@ -194,6 +205,7 @@ class Levels {
           [-1, -1, -1, 2, -1],
         ], 
     ),
+    // 12
     LevelData(
         gridSize: 5,
         start: [
@@ -211,6 +223,7 @@ class Levels {
           [-1, -1, 2, 2, 2],
         ], 
     ),
+    // 13
     LevelData(
         gridSize: 5,
         start: [
@@ -228,6 +241,7 @@ class Levels {
           [-1, -1, 2, 2, 2],
         ], 
     ),
+    // 14
     LevelData(
         gridSize: 5,
         start: [
@@ -245,6 +259,7 @@ class Levels {
           [-1, -1, 1, 1, -1],
         ], 
     ),
+    // 15
     LevelData(
         gridSize: 5,
         start: [
@@ -262,6 +277,7 @@ class Levels {
           [-1, 1, -1, 1, -1],
         ], 
     ),
+    // 16
     LevelData(
         gridSize: 5,
         start: [
@@ -279,6 +295,7 @@ class Levels {
           [1, -1, 2, -1, 1],
         ], 
     ),
+    // 17
     LevelData(
         gridSize: 5,
         start: [
@@ -296,6 +313,7 @@ class Levels {
           [-1, 0, -1, 0, -1],
         ], 
     ),
+    // 18
     LevelData(
         gridSize: 5,
         start: [
