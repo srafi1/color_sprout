@@ -220,11 +220,11 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   crossAxisCount: 5,
-                  children: templateLevels + randomTemplateLevels + unlockedLevels + lockedLevels,
+                  children: unlockedLevels + lockedLevels,
                 )
               ),
               buildIconButton(
-                icon: Icon(Icons.home),
+                icon: FaIcon(FontAwesomeIcons.home),
                 color: Colors.red,
                 size: 70,
                 callback: () {
@@ -348,17 +348,17 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 },
               ),
             ),
-            Card(
-              elevation: 0,
-              color: GameColors.background,
-              child: buildIconButton(
-                icon: Icon(Icons.code),
-                color: Colors.blue,
-                callback: () {
-                  game.printState();
-                },
-              ),
-            ),
+            //Card(
+              //elevation: 0,
+              //color: GameColors.background,
+              //child: buildIconButton(
+                //icon: Icon(Icons.code),
+                //color: Colors.blue,
+                //callback: () {
+                  //game.printState();
+                //},
+              //),
+            //),
           ],
         ),
       );
