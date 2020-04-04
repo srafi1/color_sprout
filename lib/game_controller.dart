@@ -6,6 +6,7 @@ import 'package:flame/components/text_component.dart';
 import 'game_colors.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -77,7 +78,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   }
   
 
-  Widget buildIconButton({Color color, Icon icon, Function callback, double size: 50}) {
+  Widget buildIconButton({Color color, FaIcon icon, Function callback, double size: 50}) {
     return
       Padding(
         padding: EdgeInsets.all(10),
@@ -108,7 +109,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
             children: <Widget>[
               Text("Color Sprout", style: largeText),
               buildIconButton(
-                icon: Icon(Icons.play_arrow),
+                icon: FaIcon(Icons.play_arrow),
                 color: Colors.green,
                 callback: () {
                   loadLevel();
@@ -120,7 +121,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   buildIconButton(
-                    icon: Icon(Icons.list),
+                    icon: FaIcon(FontAwesomeIcons.bars),
                     color: Colors.blue,
                     callback: () {
                       removeWidgetOverlay("mainMenu");
@@ -131,7 +132,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                     },
                   ),
                   buildIconButton(
-                    icon: Icon(Icons.favorite),
+                    icon: FaIcon(Icons.favorite),
                     color: Colors.red,
                     callback: () {
                       String url = "https://play.google.com/store/apps/details?id=com.shakilrafi.color_sprout";
@@ -245,7 +246,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     List<Widget> buttons = [
       buildIconButton(
         color: Colors.red,
-        icon: Icon(Icons.home),
+        icon: FaIcon(FontAwesomeIcons.home),
         callback: () {
         removeWidgetOverlay("levelCompleteMenu");
         addWidgetOverlay(
@@ -256,7 +257,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
       ),
       buildIconButton(
         color: Colors.blue,
-        icon: Icon(Icons.list),
+        icon: FaIcon(FontAwesomeIcons.bars),
         callback: () {
           removeWidgetOverlay("levelCompleteMenu");
           addWidgetOverlay(
@@ -273,7 +274,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
       buttons.add(
         buildIconButton(
           color: Colors.green,
-          icon: Icon(Icons.play_arrow),
+          icon: FaIcon(FontAwesomeIcons.arrowRight),
           callback: () {
             loadLevel();
             removeWidgetOverlay("levelCompleteMenu");
@@ -323,7 +324,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
               elevation: 0,
               color: GameColors.background,
               child: buildIconButton(
-                icon: Icon(Icons.home),
+                icon: FaIcon(FontAwesomeIcons.home),
                 color: Colors.red,
                 callback: () {
                   addWidgetOverlay(
@@ -337,7 +338,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
               elevation: 0,
               color: GameColors.background,
               child: buildIconButton(
-                icon: Icon(Icons.restore),
+                icon: FaIcon(FontAwesomeIcons.undoAlt),
                 color: Colors.blue,
                 callback: () {
                   addWidgetOverlay(
@@ -383,14 +384,14 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     buildIconButton(
-                      icon: Icon(Icons.close),
+                      icon: FaIcon(FontAwesomeIcons.times),
                       color: Colors.red,
                       callback: () {
                         removeWidgetOverlay("goHomePrompt");
                       }
                     ),
                     buildIconButton(
-                      icon: Icon(Icons.check),
+                      icon: FaIcon(FontAwesomeIcons.check),
                       color: Colors.green,
                       callback: () {
                         removeWidgetOverlay("goHomePrompt");
@@ -429,14 +430,14 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     buildIconButton(
-                      icon: Icon(Icons.close),
+                      icon: FaIcon(FontAwesomeIcons.times),
                       color: Colors.red,
                       callback: () {
                         removeWidgetOverlay("resetPrompt");
                       }
                     ),
                     buildIconButton(
-                      icon: Icon(Icons.check),
+                      icon: FaIcon(FontAwesomeIcons.check),
                       color: Colors.green,
                       callback: () {
                         removeWidgetOverlay("resetPrompt");
