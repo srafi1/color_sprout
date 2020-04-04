@@ -20,6 +20,7 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
   bool allowInput;
   GridBackground gridBackground;
   List<List<Tile>> grid;
+  int numUpdating;
   bool sentCompletion;
 
   GameComponent(this.game, this.screenSize) {
@@ -31,6 +32,7 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
   }
 
   void initializeLevel(LevelData levelData) {
+    numUpdating = 0;
     allowInput = true;
     sentCompletion = false;
     components.clear();
@@ -78,6 +80,7 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
     for (int i = 1; i <= levelData.gridSize; i++) {
       for (int j = 1; j <= levelData.gridSize; j++) {
         components..add(grid[i][j]);
+        grid[i][j].onScreen = true;
       }
     }
   }
@@ -94,6 +97,10 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
   }
 
   void checkCompletion() {
+    numUpdating--;
+    if (numUpdating > 0) {
+      return;
+    }
     bool complete = true;
     for (int i = 1; i < grid.length-1; i++) {
       for (int j = 1; j < grid.length-1; j++) {

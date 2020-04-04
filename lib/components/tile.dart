@@ -26,6 +26,7 @@ class Tile extends PositionComponent with Tapable {
   bool shrinking;
 
   List<Tile> neighbors;
+  bool onScreen;
 
   Tile(this.game) {
     colorID = -1;
@@ -41,6 +42,7 @@ class Tile extends PositionComponent with Tapable {
     shrinking = false;
 
     neighbors = List();
+    onScreen = false;
   }
 
   void resize(Size size) {
@@ -104,6 +106,7 @@ class Tile extends PositionComponent with Tapable {
   void onTapUp(TapUpDetails tap) {
     if (colorID != -1 && game.allowInput) {
       game.allowInput = false;
+      game.numUpdating = 1 + neighbors.where((tile) {return tile.onScreen;}).length;
       neighbors.forEach((Tile neighbor) {
         neighbor.setNextColor(colorID);
       });
