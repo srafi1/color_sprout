@@ -396,7 +396,6 @@ class Levels {
   }
 
   static LevelData randomLevel(int gridSize) {
-    print("size: $gridSize");
     LevelData level = LevelData(
         gridSize: gridSize,
         start: List.generate(gridSize, (i) {
@@ -413,21 +412,85 @@ class Levels {
 
     Random rand = Random();
     int numStarting = rand.nextInt(GameColors.tileColors.length)+1;
+    numStarting = 5;
     for (int i = 0; i < numStarting; i++) {
-      int x = rand.nextInt(gridSize);
-      int y = rand.nextInt(gridSize);
-      while (level.start[y][x] != -1) {
-        x = rand.nextInt(gridSize);
-        y = rand.nextInt(gridSize);
+      int x = rand.nextInt(gridSize-2)+1;
+      int y = rand.nextInt(gridSize-2)+1;
+      bool neighborHasTile() {
+        bool ret = false;
+        if (x+1 < gridSize && level.start[y][x+1] != -1) {
+          ret = true;
+        }
+        if (y+1 < gridSize && level.start[y+1][x] != -1) {
+          ret = true;
+        }
+        if (x-1 >= 0 && level.start[y][x-1] != -1) {
+          ret = true;
+        }
+        if (y-1 >= 0 && level.start[y-1][x] != -1) {
+          ret = true;
+        }
+        return ret;
+      }
+      while (level.start[y][x] != -1 || neighborHasTile()) {
+        x = rand.nextInt(gridSize-2)+1;
+        y = rand.nextInt(gridSize-2)+1;
       }
       level.start[y][x] = i;
     }
 
-    print("random level start: $gridSize");
+    print("random level start:");
     level.start.sublist(0, level.start.length).forEach((row) {
       List<int> pr = row.sublist(0, row.length).map( (tile) {return tile;} ).toList();
       print("$pr,");
     });
+
+    return level;
+  }
+
+  static LevelData randomFlips(LevelData level, int numFlips) {
+    List<List<int>> activeTiles = [];
+    for (int y = 0; y < level.gridSize; y++) {
+      for (int x = 0; x < level.gridSize; x++) {
+        if (level.start[y][x] != -1) {
+          level.target[y][x] = level.start[y][x];
+          activeTiles.add([x,y]);
+        }
+      }
+    }
+
+    Random rand = Random();
+    for (int i = 0; i < numFlips; i++) {
+      // choose random tile
+      int tile;
+      if (rand.nextInt(100) < 80) {
+        tile = rand.nextInt((activeTiles.length/5).ceil());
+      } else {
+        tile = rand.nextInt(activeTiles.length);
+      }
+      int x = activeTiles[tile][0];
+      int y = activeTiles[tile][1];
+      int tileColor = level.target[y][x];
+      // flip the tile
+      activeTiles.removeAt(tile);
+      level.target[y][x] = -1;
+      if (x+1 < level.gridSize) {
+        level.target[y][x+1] = tileColor;
+        activeTiles.add([x+1,y]);
+      }
+      if (y+1 < level.gridSize) {
+        level.target[y+1][x] = tileColor;
+        activeTiles.add([x,y+1]);
+      }
+      if (x-1 >= 0) {
+        level.target[y][x-1] = tileColor;
+        activeTiles.add([x-1,y]);
+      }
+      if (y-1 >= 0) {
+        level.target[y-1][x] = tileColor;
+        activeTiles.add([x,y-1]);
+      }
+    }
 
     return level;
   }
