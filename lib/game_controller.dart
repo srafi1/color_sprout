@@ -174,7 +174,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
           child: Text("R$i", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
             levelText.text = "Random Template: $i";
-            game.initializeLevel(Levels.loadTemplate(-1*i));
+            game.initializeLevel(Levels.randomFlips(Levels.loadTemplate(-1*i), 15));
             removeWidgetOverlay("levelsMenu");
           },
       );
