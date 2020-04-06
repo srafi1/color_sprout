@@ -9,5 +9,5 @@ Find it on the [Play Store](https://play.google.com/store/apps/details?id=com.sh
 ```bash
 $ flutter pub get # get dependencies
 $ flutter pub run flutter_launcher_icons:main # generate icon
-$ fluter run # run on connected device
+$ flutter run # run on connected device
 ```
