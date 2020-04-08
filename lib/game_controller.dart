@@ -183,6 +183,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     int highestLevel = storage.getInt("level") ?? 0;
     List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
       return RaisedButton(
+          padding: EdgeInsets.all(0),
           color: Colors.blue,
           child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
@@ -194,6 +195,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     });
     List<Widget> lockedLevels = List.generate(Levels.maxLevel()-highestLevel, (i) {
       return RaisedButton(
+        padding: EdgeInsets.all(0),
         color: Colors.grey,
         child: Text(
           "${highestLevel+i+2}",
