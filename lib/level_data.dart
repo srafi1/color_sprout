@@ -1161,6 +1161,7 @@ class Levels {
       // choose random tile
       int tile;
       if (rand.nextInt(100) < 80) {
+        // prefer tiles in the beginning of the list so one color doesn't end up dominant
         tile = rand.nextInt((activeTiles.length/5).ceil());
       } else {
         tile = rand.nextInt(activeTiles.length);
@@ -1168,8 +1169,7 @@ class Levels {
       int x = activeTiles[tile][0];
       int y = activeTiles[tile][1];
       int tileColor = level.target[y][x];
-      // flip the tile
-      activeTiles.removeAt(tile);
+      // sprout the tile
       level.target[y][x] = -1;
       if (x+1 < level.gridSize) {
         level.target[y][x+1] = tileColor;
@@ -1187,6 +1187,7 @@ class Levels {
         level.target[y-1][x] = tileColor;
         activeTiles.add([x,y-1]);
       }
+      activeTiles.removeWhere((tile) {return tile[0] == x && tile[1] == y;});
     }
 
     return level;
