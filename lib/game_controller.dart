@@ -23,9 +23,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   GameController(Size initialSize, this.storage) {
     level = storage.getInt("level") ?? 0;
     chosenLevel = false;
-    if (level > Levels.maxLevel()) {
-      arcadeMode = true;
-    }
+    arcadeMode = level > Levels.maxLevel();
     levelText = TextComponent("Level ${level+1}")
         ..anchor = Anchor.bottomLeft
         ..x = 10
