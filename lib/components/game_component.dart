@@ -23,6 +23,8 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
   int numUpdating;
   bool sentCompletion;
 
+  LevelData level;
+
   GameComponent(this.game, this.screenSize) {
     allowInput = true;
     sentCompletion = false;
@@ -32,6 +34,7 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
   }
 
   void initializeLevel(LevelData levelData) {
+    level = levelData;
     numUpdating = 0;
     allowInput = true;
     sentCompletion = false;
@@ -83,6 +86,10 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
         grid[i][j].onScreen = true;
       }
     }
+  }
+
+  void reloadLevel() {
+    initializeLevel(level);
   }
 
   @override
