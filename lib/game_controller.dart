@@ -67,6 +67,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
 
   void completeLevel() {
     if (!arcadeMode) {
+      chosenLevel = true;
       level++;
       int highestLevel = storage.getInt("level") ?? 0;
       if (level > highestLevel) {
@@ -289,11 +290,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
 
     if (arcadeMode || level > Levels.maxLevel()) {
       if (!chosenLevel) {
-        if (arcadeMode) {
-          text = "Arcade level completed!";
-        } else {
-          text = "All levels completed!";
-        }
+        text = "Arcade level completed!";
       }
       buttons.add(
         buildIconButton(
