@@ -17,9 +17,15 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   TextStyle largeText;
   TextStyle normalText;
   GameComponent game;
+  bool arcadeMode;
+  bool chosenLevel;
 
   GameController(Size initialSize, this.storage) {
     level = storage.getInt("level") ?? 0;
+    chosenLevel = false;
+    if (level > Levels.maxLevel()) {
+      arcadeMode = true;
+    }
     levelText = TextComponent("Level ${level+1}")
         ..anchor = Anchor.bottomLeft
         ..x = 10
@@ -62,21 +68,24 @@ class GameController extends BaseGame with HasWidgetsOverlay {
   }
 
   void completeLevel() {
-    level++;
-    int highestLevel = storage.getInt("level") ?? 0;
-    if (level > highestLevel && level <= Levels.maxLevel()) {
-      highestLevel = level;
+    if (!arcadeMode) {
+      level++;
+      int highestLevel = storage.getInt("level") ?? 0;
+      if (level > highestLevel) {
+        highestLevel = level;
+      }
+      if (level > Levels.maxLevel()) {
+        arcadeMode = true;
+      }
+      storage.setInt("level", highestLevel);
     }
-    storage.setInt("level", highestLevel);
     addWidgetOverlay(
         "levelCompleteMenu",
         buildLevelCompleteMenu()
     );
-    if (level > Levels.maxLevel()) {
-      level--;
-    }
+    chosenLevel = false;
   }
-  
+
 
   Widget buildIconButton({Color color, FaIcon icon, Function callback, double size: 50}) {
     return
@@ -112,7 +121,13 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                 icon: FaIcon(Icons.play_arrow),
                 color: Colors.green,
                 callback: () {
-                  loadLevel();
+                  if (arcadeMode) {
+                    levelText.text = "Arcade mode";
+                    LevelData level = Levels.randomFlips(Levels.randomLevel(7), 15);
+                    game.initializeLevel(level);
+                  } else {
+                    loadLevel();
+                  }
                   removeWidgetOverlay('mainMenu');
                 },
                 size: 100,
@@ -181,12 +196,16 @@ class GameController extends BaseGame with HasWidgetsOverlay {
     });
 
     int highestLevel = storage.getInt("level") ?? 0;
+    if (highestLevel > Levels.maxLevel()) {
+      highestLevel--;
+    }
     List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
       return RaisedButton(
           padding: EdgeInsets.all(0),
           color: Colors.blue,
           child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
+            chosenLevel = true;
             level = i;
             loadLevel();
             removeWidgetOverlay("levelsMenu");
@@ -270,8 +289,26 @@ class GameController extends BaseGame with HasWidgetsOverlay {
       ),
     ];
 
-    if (level > Levels.maxLevel()) {
-      text = "All levels completed!";
+    if (arcadeMode || level > Levels.maxLevel()) {
+      if (!chosenLevel) {
+        if (arcadeMode) {
+          text = "Arcade level completed!";
+        } else {
+          text = "All levels completed!";
+        }
+      }
+      buttons.add(
+        buildIconButton(
+          color: Colors.green,
+          icon: FaIcon(FontAwesomeIcons.arrowRight),
+          callback: () {
+            levelText.text = "Arcade mode";
+            LevelData level = Levels.randomFlips(Levels.randomLevel(7), 15);
+            game.initializeLevel(level);
+            removeWidgetOverlay("levelCompleteMenu");
+          },
+        )
+      );
     } else {
       buttons.add(
         buildIconButton(
@@ -443,7 +480,7 @@ class GameController extends BaseGame with HasWidgetsOverlay {
                       color: Colors.green,
                       callback: () {
                         removeWidgetOverlay("resetPrompt");
-                        loadLevel();
+                        game.reloadLevel();
                       }
                     ),
                   ],
