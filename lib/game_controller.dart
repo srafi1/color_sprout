@@ -2,6 +2,7 @@ import 'package:color_sprout/components/background.dart';
 import 'package:color_sprout/components/game_component.dart';
 import 'package:color_sprout/level_data.dart';
 import 'package:flame/anchor.dart';
+import 'package:flame/components/mixins/tapable.dart';
 import 'package:flame/components/text_component.dart';
 import 'game_colors.dart';
 import 'package:flame/game.dart';
@@ -10,7 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GameController extends BaseGame with HasWidgetsOverlay {
+class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponents {
   SharedPreferences storage;
   int level;
   TextComponent levelText;
