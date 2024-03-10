@@ -4,33 +4,23 @@ import 'package:color_sprout/components/grid_background.dart';
 import 'package:color_sprout/components/tile.dart';
 import 'package:color_sprout/game_controller.dart';
 import 'package:color_sprout/level_data.dart';
-import 'package:flame/components/component.dart';
-import 'package:flame/components/composed_component.dart';
-import 'package:flame/components/mixins/has_game_ref.dart';
-import 'package:flame/components/mixins/tapable.dart';
-import 'package:flame/game/game.dart';
+import 'package:flame/components.dart';
 import 'package:flutter/cupertino.dart';
 
-class GameComponent extends PositionComponent with HasGameRef, Tapable, ComposedComponent {
-  @override
-  Game gameRef;
-  GameController game;
-  Size screenSize;
+class GameComponent extends PositionComponent {
+  GameController gameController;
+  Vector2 screenSize;
 
-  bool allowInput;
-  GridBackground gridBackground;
-  List<List<Tile>> grid;
-  int numUpdating;
-  bool sentCompletion;
+  bool allowInput = true;
+  GridBackground gridBackground = GridBackground();
+  List<List<Tile>> grid = List.empty(growable: true);
+  int numUpdating = 0;
+  bool sentCompletion = false;
 
-  LevelData level;
+  LevelData? level;
 
-  GameComponent(this.game, this.screenSize) {
-    allowInput = true;
-    sentCompletion = false;
-
-    gridBackground = GridBackground();
-    gridBackground.resize(screenSize);
+  GameComponent(this.gameController, this.screenSize) {
+    gridBackground.onGameResize(screenSize);
   }
 
   void initializeLevel(LevelData levelData) {
@@ -38,21 +28,23 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
     numUpdating = 0;
     allowInput = true;
     sentCompletion = false;
-    components.clear();
-    components..add(gridBackground);
+    children.clear();
+    children..add(gridBackground);
 
     // create grid
     double tileSize = width / levelData.gridSize;
-    grid = List();
+    grid = List<List<Tile>>.empty(growable: true);
     for (int i = 0; i < levelData.gridSize + 2; i++) {
       grid.add([]);
       for (int j = 0; j < levelData.gridSize + 2; j++) {
-        grid[i].add(Tile(this)
-            ..x = (i-1)*tileSize
-            ..y = y + (j-1)*tileSize
-            ..width = tileSize
-            ..height = tileSize);
-        grid[i][j].resize(screenSize);
+        grid[i].add(Tile(
+          this,
+          (i-1)*tileSize,
+          y + (j-1)*tileSize,
+          tileSize,
+          tileSize),
+        );
+        grid[i][j].onGameResize(screenSize);
       }
     }
 
@@ -82,25 +74,25 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
 
     for (int i = 1; i <= levelData.gridSize; i++) {
       for (int j = 1; j <= levelData.gridSize; j++) {
-        components..add(grid[i][j]);
+        children..add(grid[i][j]);
         grid[i][j].onScreen = true;
       }
     }
   }
 
   void reloadLevel() {
-    initializeLevel(level);
+    initializeLevel(level!);
   }
 
   @override
-  void resize(Size size) {
-    super.resize(size);
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
     screenSize = size;
   }
 
   @override
   Rect toRect() {
-    return gridBackground.bgRect;
+    return gridBackground.bgRect!;
   }
 
   void checkCompletion() {
@@ -119,7 +111,7 @@ class GameComponent extends PositionComponent with HasGameRef, Tapable, Composed
     if (complete && !sentCompletion) {
       sentCompletion = true;
       allowInput = false;
-      game.completeLevel();
+      gameController.completeLevel();
     }
   }
 

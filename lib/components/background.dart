@@ -1,24 +1,24 @@
 import 'dart:ui';
 
 import 'package:color_sprout/game_colors.dart';
-import 'package:flame/components/component.dart';
+import 'package:flame/components.dart';
 import 'package:flutter/cupertino.dart';
 
 class BackgroundComponent extends Component {
-  Rect bgRect;
-  Paint bgColor;
+  Rect? bgRect;
+  Paint? bgColor;
 
   BackgroundComponent() : bgColor = Paint()..color = GameColors.background;
 
   @override
-  void resize(Size newSize) {
-    super.resize(newSize);
-    bgRect = Rect.fromLTWH(0, 0, newSize.width, newSize.height);
+  void onGameResize(Vector2 newSize) {
+    super.onGameResize(newSize);
+    bgRect = Rect.fromLTWH(0, 0, newSize.x, newSize.y);
   }
 
   @override
   void render(Canvas c) {
-    c.drawRect(bgRect, bgColor);
+    c.drawRect(bgRect!, bgColor!);
   }
 
   @override

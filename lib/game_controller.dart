@@ -1,9 +1,8 @@
 import 'package:color_sprout/components/background.dart';
 import 'package:color_sprout/components/game_component.dart';
 import 'package:color_sprout/level_data.dart';
-import 'package:flame/anchor.dart';
-import 'package:flame/components/mixins/tapable.dart';
-import 'package:flame/components/text_component.dart';
+import 'package:flame/events.dart';
+import 'package:flame/components.dart';
 import 'game_colors.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -11,59 +10,53 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponents {
+class GameController extends FlameGame with TapDetector {
   SharedPreferences storage;
-  int level;
-  TextComponent levelText;
-  TextStyle largeText;
-  TextStyle normalText;
-  GameComponent game;
-  bool arcadeMode;
-  bool chosenLevel;
+  int level = 0;
+  TextComponent? levelText;
+  TextStyle largeText = TextStyle(
+    color: Colors.black,
+    fontSize: 40,
+  );
 
-  GameController(Size initialSize, this.storage) {
-    level = storage.getInt("level") ?? 0;
-    chosenLevel = false;
-    arcadeMode = level > Levels.maxLevel();
-    levelText = TextComponent("Level ${level+1}")
-        ..anchor = Anchor.bottomLeft
-        ..x = 10
-        ..y = initialSize.height/2 - initialSize.width/2 - 10;
-
-    largeText = TextStyle(
-      color: Colors.black,
-      fontSize: 40,
-    );
-
-    normalText = TextStyle(
+  TextStyle normalText = TextStyle(
       color: Colors.black,
       fontSize: 32,
     );
+  GameComponent? game;
+  bool arcadeMode = false;
+  bool chosenLevel = false;
 
-    game = GameComponent(this, initialSize)
-        ..x = 0
-        ..y = initialSize.height/2 - initialSize.width/2
-        ..width = initialSize.width
-        ..height = initialSize.width;
+  GameController(this.storage) {
+    level = storage.getInt("level") ?? 0;
+    arcadeMode = level > Levels.maxLevel();
+  }
+
+  @override
+  void onLoad() {
+    Size initialSize = Size(size.x, size.y);
+    levelText = TextComponent()
+      ..text = "Level ${level+1}"
+      ..textRenderer = TextPaint(style: normalText)
+      ..anchor = Anchor.bottomLeft
+      ..x = 10
+      ..y = initialSize.height/2 - initialSize.width/2 - 10;
+
+    game = GameComponent(this, size)
+      ..x = 0
+      ..y = initialSize.height/2 - initialSize.width/2
+      ..width = initialSize.width
+      ..height = initialSize.width;
 
     add(BackgroundComponent());
-    add(game);
-    add(levelText);
-
-    addWidgetOverlay(
-      "gameBottomUI",
-      buildGameBottom()
-    );
-
-    addWidgetOverlay(
-      "mainMenu",
-      buildMainMenu()
-    );
+    add(game!);
+    add(levelText!);
+    print("level text pos ${levelText!.x} ${levelText!.y}");
   }
 
   void loadLevel() {
-    levelText.text = "Level ${level+1}";
-    game.initializeLevel(Levels.loadLevel(level));
+    levelText!.text = "Level ${level+1}";
+    game!.initializeLevel(Levels.loadLevel(level));
   }
 
   void completeLevel() {
@@ -79,15 +72,12 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       }
       storage.setInt("level", highestLevel);
     }
-    addWidgetOverlay(
-        "levelCompleteMenu",
-        buildLevelCompleteMenu()
-    );
+    overlays.add('levelCompleteMenu');
     chosenLevel = false;
   }
 
 
-  Widget buildIconButton({Color color, FaIcon icon, Function callback, double size: 50}) {
+  Widget buildIconButton({required Color color, required FaIcon icon, required void Function() callback, double size = 50}) {
     return
       Padding(
         padding: EdgeInsets.all(10),
@@ -107,7 +97,7 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       );
   }
 
-  Widget buildMainMenu() {
+  Widget buildMainMenu(BuildContext, GameController) {
     return
       Card(
         margin: EdgeInsets.only(),
@@ -122,13 +112,13 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
                 color: Colors.green,
                 callback: () {
                   if (arcadeMode) {
-                    levelText.text = "Arcade mode";
+                    levelText!.text = "Arcade mode";
                     LevelData level = Levels.randomFlips(Levels.randomLevel(7), 15);
-                    game.initializeLevel(level);
+                    game!.initializeLevel(level);
                   } else {
                     loadLevel();
                   }
-                  removeWidgetOverlay('mainMenu');
+                  overlays.remove('mainMenu');
                 },
                 size: 100,
               ),
@@ -139,22 +129,19 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
                     icon: FaIcon(FontAwesomeIcons.bars),
                     color: Colors.blue,
                     callback: () {
-                      removeWidgetOverlay("mainMenu");
-                      addWidgetOverlay(
-                        "levelsMenu",
-                        buildLevelsMenu()
-                      );
+                      overlays.remove("mainMenu");
+                      overlays.add("levelsMenu");
                     },
                   ),
                   buildIconButton(
                     icon: FaIcon(Icons.favorite),
                     color: Colors.red,
                     callback: () {
-                      String url = "https://play.google.com/store/apps/details?id=com.shakilrafi.color_sprout";
-                      canLaunch(url)
+                      Uri url = Uri.parse("https://play.google.com/store/apps/details?id=com.shakilrafi.color_sprout");
+                      canLaunchUrl(url)
                           .then((bool able) {
                             if (able) {
-                              launch(url);
+                              launchUrl(url);
                             } else {
                               print("cant rate");
                             }
@@ -169,28 +156,28 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       );
   }
 
-  Widget buildLevelsMenu() {
+  Widget buildLevelsMenu(BuildContext, GameController) {
     List<Widget> templateLevels = List.generate(Levels.maxTemplate()+1, (i) {
-      return RaisedButton(
-          color: Colors.green,
+      return ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
           child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
             level = i;
-            levelText.text = "Template ${level+1}";
-            game.initializeLevel(Levels.loadTemplate(level));
-            removeWidgetOverlay("levelsMenu");
+            levelText!.text = "Template ${level+1}";
+            game!.initializeLevel(Levels.loadTemplate(level));
+            overlays.remove("levelsMenu");
           },
       );
     });
     List<Widget> randomTemplateLevels = List.generate(3, (i) {
       i = i + 5;
-      return RaisedButton(
-          color: Colors.green,
+      return ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
           child: Text("R$i", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
-            levelText.text = "Random Template: $i";
-            game.initializeLevel(Levels.randomFlips(Levels.loadTemplate(-1*i), 15));
-            removeWidgetOverlay("levelsMenu");
+            levelText!.text = "Random Template: $i";
+            game!.initializeLevel(Levels.randomFlips(Levels.loadTemplate(-1*i), 15));
+            overlays.remove("levelsMenu");
           },
       );
     });
@@ -200,22 +187,20 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       highestLevel--;
     }
     List<Widget> unlockedLevels = List.generate(highestLevel+1, (i) {
-      return RaisedButton(
-          padding: EdgeInsets.all(0),
-          color: Colors.blue,
+      return ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, padding: EdgeInsets.all(0),),
           child: Text("${i+1}", style: normalText.copyWith(color: Colors.white)),
           onPressed: () {
             chosenLevel = true;
             level = i;
             loadLevel();
-            removeWidgetOverlay("levelsMenu");
+            overlays.remove("levelsMenu");
           },
       );
     });
     List<Widget> lockedLevels = List.generate(Levels.maxLevel()-highestLevel, (i) {
-      return RaisedButton(
-        padding: EdgeInsets.all(0),
-        color: Colors.grey,
+      return ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, padding: EdgeInsets.all(0)),
         child: Text(
           "${highestLevel+i+2}",
           style: normalText.copyWith(color: Colors.white)
@@ -245,15 +230,12 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
                 )
               ),
               buildIconButton(
-                icon: FaIcon(FontAwesomeIcons.home),
+                icon: FaIcon(FontAwesomeIcons.house),
                 color: Colors.red,
                 size: 70,
                 callback: () {
-                  removeWidgetOverlay("levelsMenu");
-                  addWidgetOverlay(
-                    "mainMenu",
-                    buildMainMenu()
-                  );
+                  overlays.remove("levelsMenu");
+                  overlays.add("mainMenu");
                 }
               ),
             ]
@@ -262,29 +244,23 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       );
   }
 
-  Widget buildLevelCompleteMenu() {
+  Widget buildLevelCompleteMenu(BuildContext, GameController) {
     String text = "Level complete!";
     List<Widget> buttons = [
       buildIconButton(
         color: Colors.red,
-        icon: FaIcon(FontAwesomeIcons.home),
+        icon: FaIcon(FontAwesomeIcons.house),
         callback: () {
-        removeWidgetOverlay("levelCompleteMenu");
-        addWidgetOverlay(
-          "mainMenu",
-          buildMainMenu()
-        );
+        overlays.remove("levelCompleteMenu");
+        overlays.add("mainMenu");
         }
       ),
       buildIconButton(
         color: Colors.blue,
         icon: FaIcon(FontAwesomeIcons.bars),
         callback: () {
-          removeWidgetOverlay("levelCompleteMenu");
-          addWidgetOverlay(
-            "levelsMenu",
-            buildLevelsMenu()
-          );
+          overlays.remove("levelCompleteMenu");
+          overlays.add("levelsMenu");
         }
       ),
     ];
@@ -298,10 +274,10 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
           color: Colors.green,
           icon: FaIcon(FontAwesomeIcons.arrowRight),
           callback: () {
-            levelText.text = "Arcade mode";
+            levelText!.text = "Arcade mode";
             LevelData level = Levels.randomFlips(Levels.randomLevel(7), 15);
-            game.initializeLevel(level);
-            removeWidgetOverlay("levelCompleteMenu");
+            game!.initializeLevel(level);
+            overlays.remove("levelCompleteMenu");
           },
         )
       );
@@ -312,7 +288,7 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
           icon: FaIcon(FontAwesomeIcons.arrowRight),
           callback: () {
             loadLevel();
-            removeWidgetOverlay("levelCompleteMenu");
+            overlays.remove("levelCompleteMenu");
           },
         )
       );
@@ -344,7 +320,7 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       );
   }
 
-  Widget buildGameBottom() {
+  Widget buildGameBottom(BuildContext, GameController) {
     return
       Container(
         width:double.infinity,
@@ -359,13 +335,10 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
               elevation: 0,
               color: GameColors.background,
               child: buildIconButton(
-                icon: FaIcon(FontAwesomeIcons.home),
+                icon: FaIcon(FontAwesomeIcons.house),
                 color: Colors.red,
                 callback: () {
-                  addWidgetOverlay(
-                    "goHomePrompt",
-                    buildGoHomePrompt()
-                  );
+                  overlays.add("goHomePrompt");
                 },
               )
             ),
@@ -373,13 +346,10 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
               elevation: 0,
               color: GameColors.background,
               child: buildIconButton(
-                icon: FaIcon(FontAwesomeIcons.undoAlt),
+                icon: FaIcon(FontAwesomeIcons.rotateLeft),
                 color: Colors.blue,
                 callback: () {
-                  addWidgetOverlay(
-                    "resetPrompt",
-                    buildResetPrompt()
-                  );
+                  overlays.add("resetPrompt");
                 },
               ),
             ),
@@ -399,7 +369,7 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       );
   }
 
-  Widget buildGoHomePrompt() {
+  Widget buildGoHomePrompt(BuildContext, GameController) {
     return 
       Center(
         child: Card(
@@ -419,21 +389,18 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     buildIconButton(
-                      icon: FaIcon(FontAwesomeIcons.times),
+                      icon: FaIcon(FontAwesomeIcons.xmark),
                       color: Colors.red,
                       callback: () {
-                        removeWidgetOverlay("goHomePrompt");
+                        overlays.remove("goHomePrompt");
                       }
                     ),
                     buildIconButton(
                       icon: FaIcon(FontAwesomeIcons.check),
                       color: Colors.green,
                       callback: () {
-                        removeWidgetOverlay("goHomePrompt");
-                        addWidgetOverlay(
-                          "mainMenu",
-                          buildMainMenu()
-                        );
+                        overlays.remove("goHomePrompt");
+                        overlays.add("mainMenu");
                       }
                     ),
                   ],
@@ -445,7 +412,7 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
       );
   }
 
-  Widget buildResetPrompt() {
+  Widget buildResetPrompt(BuildContext, GameController) {
     return 
       Center(
         child: Card(
@@ -465,18 +432,18 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     buildIconButton(
-                      icon: FaIcon(FontAwesomeIcons.times),
+                      icon: FaIcon(FontAwesomeIcons.xmark),
                       color: Colors.red,
                       callback: () {
-                        removeWidgetOverlay("resetPrompt");
+                        overlays.remove("resetPrompt");
                       }
                     ),
                     buildIconButton(
                       icon: FaIcon(FontAwesomeIcons.check),
                       color: Colors.green,
                       callback: () {
-                        removeWidgetOverlay("resetPrompt");
-                        game.reloadLevel();
+                        overlays.remove("resetPrompt");
+                        game!.reloadLevel();
                       }
                     ),
                   ],
@@ -486,5 +453,16 @@ class GameController extends BaseGame with HasWidgetsOverlay, HasTapableComponen
           ),
         )
       );
+  }
+
+  Map<String, Widget Function(BuildContext, GameController)> overlayBuilders() {
+    return {
+      "gameBottomUI": buildGameBottom,
+      "mainMenu": buildMainMenu,
+      "levelCompleteMenu": buildLevelCompleteMenu,
+      "levelsMenu": buildLevelsMenu,
+      "goHomePrompt": buildGoHomePrompt,
+      "resetPrompt": buildResetPrompt,
+    };
   }
 }

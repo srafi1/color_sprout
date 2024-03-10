@@ -6,7 +6,7 @@ class LevelData {
   int gridSize;
   List<List<int>> start;
   List<List<int>> target;
-  LevelData({this.gridSize, this.start, this.target});
+  LevelData({required this.gridSize, required this.start, required this.target});
 }
 
 class Levels {
