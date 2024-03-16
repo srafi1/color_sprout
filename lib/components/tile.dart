@@ -29,11 +29,10 @@ class Tile extends PositionComponent with TapCallbacks {
   bool onScreen = false;
 
   Tile(this.game, double x, double y, double width, double height) : super(position: Vector2(x, y), size: Vector2(width, height)) {}
-
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    centerOffset = Offset(x + width/2, y + height/2);
+    centerOffset = Offset(width/2, height/2);
     mainRect = Rect.fromCenter(center: centerOffset!, width: 0.8*width, height: 0.8*height);
     targetRect = Rect.fromCenter(center: centerOffset!, width: 0.95*width, height: 0.95*height);
     nextRect = Rect.fromCenter(center: centerOffset!, width: 0, height: 0);
@@ -88,8 +87,7 @@ class Tile extends PositionComponent with TapCallbacks {
     }
   }
 
-  @override
-  void onTapUp(TapUpEvent tap) {
+  void handleTap() {
     if (colorID != -1 && game.allowInput) {
       game.allowInput = false;
       game.numUpdating = 1 + neighbors.where((tile) {return tile.onScreen;}).length;
@@ -100,5 +98,15 @@ class Tile extends PositionComponent with TapCallbacks {
       nextRect = Rect.fromCenter(center: centerOffset!, width: 0.8*width, height: 0.8*height);
       nextPaint.color = GameColors.background;
     }
+  }
+
+  @override
+  void onTapUp(TapUpEvent tap) {
+    handleTap();
+  }
+
+  @override
+  void onTapCancel(TapCancelEvent tap) {
+    handleTap();
   }
 }

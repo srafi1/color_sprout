@@ -51,7 +51,6 @@ class GameController extends FlameGame with TapDetector {
     add(BackgroundComponent());
     add(game!);
     add(levelText!);
-    print("level text pos ${levelText!.x} ${levelText!.y}");
   }
 
   void loadLevel() {

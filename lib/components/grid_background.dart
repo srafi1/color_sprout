@@ -17,12 +17,11 @@ class GridBackground extends Component {
   @override
   void onGameResize(Vector2 newSize) {
     super.onGameResize(newSize);
-    double top = newSize.y/2 - newSize.x/2 - 5;
-    bgRect = Rect.fromLTWH(0, top, newSize.x, newSize.x + 10);
-    topLeft = Offset(0, top);
-    topRight = Offset(newSize.x, top);
-    bottomLeft = Offset(0, top + newSize.x + 10);
-    bottomRight = Offset(newSize.x, top + newSize.x + 10);
+    bgRect = Rect.fromLTWH(0, 0, newSize.x, newSize.x + 10);
+    topLeft = Offset(0, 0);
+    topRight = Offset(newSize.x, 0);
+    bottomLeft = Offset(0, newSize.x + 10);
+    bottomRight = Offset(newSize.x, newSize.x + 10);
   }
 
   @override

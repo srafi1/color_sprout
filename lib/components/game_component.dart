@@ -21,6 +21,7 @@ class GameComponent extends PositionComponent {
 
   GameComponent(this.gameController, this.screenSize) {
     gridBackground.onGameResize(screenSize);
+    add(gridBackground);
   }
 
   void initializeLevel(LevelData levelData) {
@@ -28,8 +29,11 @@ class GameComponent extends PositionComponent {
     numUpdating = 0;
     allowInput = true;
     sentCompletion = false;
-    children.clear();
-    children..add(gridBackground);
+    for (List<Tile> row in grid) {
+      for (Tile tile in row) {
+        // remove(tile);
+      }
+    }
 
     // create grid
     double tileSize = width / levelData.gridSize;
@@ -40,10 +44,10 @@ class GameComponent extends PositionComponent {
         grid[i].add(Tile(
           this,
           (i-1)*tileSize,
-          y + (j-1)*tileSize,
+          (j-1)*tileSize,
           tileSize,
-          tileSize),
-        );
+          tileSize
+          ));
         grid[i][j].onGameResize(screenSize);
       }
     }
@@ -74,7 +78,7 @@ class GameComponent extends PositionComponent {
 
     for (int i = 1; i <= levelData.gridSize; i++) {
       for (int j = 1; j <= levelData.gridSize; j++) {
-        children..add(grid[i][j]);
+        add(grid[i][j]);
         grid[i][j].onScreen = true;
       }
     }
